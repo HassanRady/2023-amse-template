@@ -36,14 +36,14 @@ class TestDataPipeline(TestCase):
         
         sample_plan_change = plan_changes[0]
         sample_train = trains_this_hour[0]
-        sample_train.insert_into_db(SqliteClient.db_engine, os.environ["TRAIN_PLAN_TABLE"])
-        sample_plan_change.insert_into_db(SqliteClient.db_engine, os.environ["PLAN_CHANGE_TABLE"])
+        sample_train.insert_into_db(SqliteClient.db_engine, "train_plan")
+        sample_plan_change.insert_into_db(SqliteClient.db_engine, "plan_change")
 
-        df = pd.read_sql(f"select * from {os.environ['TRAIN_PLAN_TABLE']}", SqliteClient.db_engine)
+        df = pd.read_sql(f"select * from train_plan", SqliteClient.db_engine)
         df = df.query(f"EVA_NR == {sample_train.EVA_NR}")
         self.assertGreater(len(df), 0)
 
-        df = pd.read_sql(f"select * from {os.environ['PLAN_CHANGE_TABLE']}", SqliteClient.db_engine)
+        df = pd.read_sql(f"select * from plan_change", SqliteClient.db_engine)
         df = df.query(f"EVA_NR == {sample_plan_change.EVA_NR}")
         self.assertGreater(len(df), 0)
 
@@ -122,9 +122,9 @@ class SqliteInsertionTest(TestCase):
         trains_this_hour = self.timetable_handler.get_timetable_data(response)
         sample_train = trains_this_hour[0]
 
-        sample_train.insert_into_db(SqliteClient.db_engine, os.environ["TRAIN_PLAN_TABLE"])
+        sample_train.insert_into_db(SqliteClient.db_engine, "train_plan")
 
-        df = pd.read_sql(f"select * from {os.environ['TRAIN_PLAN_TABLE']}", SqliteClient.db_engine)
+        df = pd.read_sql(f"select * from train_plan", SqliteClient.db_engine)
         df = df.query(f"EVA_NR == {sample_train.EVA_NR}")
 
         assert len(df) > 0
@@ -134,9 +134,9 @@ class SqliteInsertionTest(TestCase):
         plan_changes = self.timetable_handler.get_timetable_changes_data(response)
         sample_plan_change = plan_changes[0]
 
-        sample_plan_change.insert_into_db(SqliteClient.db_engine, os.environ["PLAN_CHANGE_TABLE"])
+        sample_plan_change.insert_into_db(SqliteClient.db_engine, "plan_change")
         
-        df = pd.read_sql(f"select * from {os.environ['PLAN_CHANGE_TABLE']}", SqliteClient.db_engine)
+        df = pd.read_sql(f"select * from plan_change", SqliteClient.db_engine)
         df = df.query(f"EVA_NR == {sample_plan_change.EVA_NR}")
 
         assert len(df) > 0
