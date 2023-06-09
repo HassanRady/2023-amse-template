@@ -6,10 +6,10 @@ load_dotenv(".env")
 
 import pandas as pd
 
-from Data.database_client import SqliteClient
-from Data.deutsche_bahn_api.api_caller import ApiClient
-from Data.deutsche_bahn_api.station_loader import StationLoader
-from Data.deutsche_bahn_api.timetable_retrieval import TimeTableHandler
+from data.database_client import SqliteClient
+from data.deutsche_bahn_api.api_caller import ApiClient
+from data.deutsche_bahn_api.station_loader import StationLoader
+from data.deutsche_bahn_api.timetable_retrieval import TimeTableHandler
 
 from project.config import config
 

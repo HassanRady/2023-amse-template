@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 
-from Data.deutsche_bahn_api.data_processor import DataProcessor
+from data.deutsche_bahn_api.data_processor import DataProcessor
 
 class TrainPlan:
     """A train plan given a station (train in station)."""

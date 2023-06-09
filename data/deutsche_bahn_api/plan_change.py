@@ -1,6 +1,6 @@
 import pandas as pd
 
-from Data.deutsche_bahn_api.data_processor import DataProcessor
+from data.deutsche_bahn_api.data_processor import DataProcessor
 
 
 class PlanChange:
