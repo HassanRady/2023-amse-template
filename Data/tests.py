@@ -11,6 +11,8 @@ from Data.deutsche_bahn_api.api_caller import ApiClient
 from Data.deutsche_bahn_api.station_loader import StationLoader
 from Data.deutsche_bahn_api.timetable_retrieval import TimeTableHandler
 
+from project.config import config
+
 from unittest import TestCase
 
 api_client = ApiClient(os.environ["DB_CLIENT_ID"], os.environ["DB_API_KEY"])
@@ -36,14 +38,14 @@ class TestDataPipeline(TestCase):
         
         sample_plan_change = plan_changes[0]
         sample_train = trains_this_hour[0]
-        sample_train.insert_into_db(SqliteClient.db_engine, "train_plan")
-        sample_plan_change.insert_into_db(SqliteClient.db_engine, "plan_change")
+        sample_train.insert_into_db(SqliteClient.db_engine, config.database.TRAIN_TABLE)
+        sample_plan_change.insert_into_db(SqliteClient.db_engine, config.database.PLAN_CHANGE_TABLE)
 
-        df = pd.read_sql(f"select * from train_plan", SqliteClient.db_engine)
+        df = pd.read_sql(f"select * from {config.database.TRAIN_TABLE}", SqliteClient.db_engine)
         df = df.query(f"EVA_NR == {sample_train.EVA_NR}")
         self.assertGreater(len(df), 0)
 
-        df = pd.read_sql(f"select * from plan_change", SqliteClient.db_engine)
+        df = pd.read_sql(f"select * from {config.database.PLAN_CHANGE_TABLE}", SqliteClient.db_engine)
         df = df.query(f"EVA_NR == {sample_plan_change.EVA_NR}")
         self.assertGreater(len(df), 0)
 
@@ -122,9 +124,9 @@ class SqliteInsertionTest(TestCase):
         trains_this_hour = self.timetable_handler.get_timetable_data(response)
         sample_train = trains_this_hour[0]
 
-        sample_train.insert_into_db(SqliteClient.db_engine, "train_plan")
+        sample_train.insert_into_db(SqliteClient.db_engine, config.database.TRAIN_TABLE)
 
-        df = pd.read_sql(f"select * from train_plan", SqliteClient.db_engine)
+        df = pd.read_sql(f"select * from {config.database.TRAIN_TABLE}", SqliteClient.db_engine)
         df = df.query(f"EVA_NR == {sample_train.EVA_NR}")
 
         assert len(df) > 0
@@ -134,9 +136,9 @@ class SqliteInsertionTest(TestCase):
         plan_changes = self.timetable_handler.get_timetable_changes_data(response)
         sample_plan_change = plan_changes[0]
 
-        sample_plan_change.insert_into_db(SqliteClient.db_engine, "plan_change")
+        sample_plan_change.insert_into_db(SqliteClient.db_engine, config.database.PLAN_CHANGE_TABLE)
         
-        df = pd.read_sql(f"select * from plan_change", SqliteClient.db_engine)
+        df = pd.read_sql(f"select * from {config.database.PLAN_CHANGE_TABLE}", SqliteClient.db_engine)
         df = df.query(f"EVA_NR == {sample_plan_change.EVA_NR}")
 
         assert len(df) > 0

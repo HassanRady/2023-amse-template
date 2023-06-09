@@ -2,11 +2,12 @@ import os
 import sqlite3
 import pandas as pd
 
-DB_PATH = os.environ["DB_PATH"]
+from project.config import config
+
 
 class SqliteClient:
     try:
-        db_engine = sqlite3.connect(os.environ["DB_PATH"])
+        db_engine = sqlite3.connect(config.database.DB_PATH)
     except sqlite3.Error as error:
         print("Error while connecting to sqlite", error)
 
