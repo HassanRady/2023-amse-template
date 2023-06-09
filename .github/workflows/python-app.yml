@@ -13,7 +13,7 @@ on:
 env:
   DB_CLIENT_ID: ${{secrets.DB_CLIENT_ID}}
   DB_API_KEY: ${{secrets.DB_API_KEY}}
-  
+
 
 permissions:
   contents: read
@@ -42,4 +42,4 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
       run: |
-        pytest
+        bash project/test.sh
