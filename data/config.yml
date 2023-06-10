@@ -1,8 +1,10 @@
 # DataBase configs
-DB_PATH: data.sqlite
+DATABASE_NAME: ./data.sqlite
+STATION_TABLE: stations
 TRAIN_TABLE: train_plan
 PLAN_CHANGE_TABLE: plan_change
 
 # Weather data configs
 WEATHER_DATA_URL: "https://opendata.dwd.de/climate_environment/CDC/observations_germany/climate/daily/kl/recent/"
 WEATHER_DATA_PATH: data/weather_data/data/
+RAW_WEATHER_DATA_TABLE: raw_weather_data
