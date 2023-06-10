@@ -1,5 +1,6 @@
 import pandas as pd
 
+from data.config import config
 from data.deutsche_bahn_api.data_processor import DataProcessor
 
 
@@ -15,13 +16,13 @@ class PlanChange:
         self.departure = None
         self.platform = None
 
-    def insert_into_db(self, db_engine, table_name):
+    def insert_into_db(self, db_engine):
         self.arrival = DataProcessor.process_date_format(self.arrival)
         self.departure = DataProcessor.process_date_format(self.departure)
 
         db_engine.execute(
             f"""
-            INSERT OR REPLACE INTO {table_name} VALUES (
+            INSERT OR REPLACE INTO {config.database.PLAN_CHANGE_TABLE} VALUES (
                 {self.EVA_NR}, '{self.stop_id}', '{self.next_stations}', '{self.passed_stations}', 
                 '{self.arrival}', '{self.departure}', '{self.platform}'
               );

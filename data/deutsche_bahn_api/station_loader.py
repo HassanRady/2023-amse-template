@@ -2,7 +2,7 @@ import json
 import pkgutil
 import mpu
 
-from data.deutsche_bahn_api.station import Station
+from deutsche_bahn_api.station import Station
 
 
 def normalize_lat_or_long_from_station(station: Station) -> dict[str, float]:

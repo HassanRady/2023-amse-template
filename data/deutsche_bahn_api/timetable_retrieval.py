@@ -1,5 +1,9 @@
 from __future__ import annotations
 
+import os
+import sys
+sys.path.append(os.path.abspath(__file__))
+
 from logger import get_file_logger
 _logger = get_file_logger(__name__, 'debug')
 

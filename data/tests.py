@@ -11,7 +11,7 @@ from data.deutsche_bahn_api.api_caller import ApiClient
 from data.deutsche_bahn_api.station_loader import StationLoader
 from data.deutsche_bahn_api.timetable_retrieval import TimeTableHandler
 
-from project.config import config
+from data.config import config
 
 from unittest import TestCase
 

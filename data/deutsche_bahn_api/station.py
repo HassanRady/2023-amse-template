@@ -1,4 +1,6 @@
 from typing import NamedTuple
+from data.config import config
+
 
 class Station(NamedTuple):
     EVA_NR: int
@@ -12,10 +14,10 @@ class Station(NamedTuple):
     Betreiber_Nr: int
     Status: str
 
-    def insert_to_db(self, db_engine, table_name):
+    def insert_to_db(self, db_engine):
         db_engine.execute(
             f"""
-            INSERT INTO {table_name} VALUES ({self.EVA_NR}, '{self.DS100}', '{self.IFOPT}', '{self.NAME}',
+            INSERT INTO {config.database.STATION_TABLE} VALUES ({self.EVA_NR}, '{self.DS100}', '{self.IFOPT}', '{self.NAME}',
             '{self.Verkehr}', '{self.Laenge}', '{self.Breite}', '{self.Betreiber_Name}', {self.Betreiber_Nr}, '{self.Status}');
            """
 
