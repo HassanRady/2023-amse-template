@@ -1,12 +1,10 @@
-import os
-
-from deutsche_bahn_api.api_caller import ApiClient
 from database_client import SqliteClient
+from deutsche_bahn_api.api_caller import ApiClient
 from deutsche_bahn_api.timetable_retrieval import TimeTableHandler
 from deutsche_bahn_api.station_loader import StationLoader
 
 
-api_client = ApiClient(os.environ["DB_CLIENT_ID"], os.environ["DB_API_KEY"])
+api_client = ApiClient()
 station_helper = StationLoader()
 station_helper.load_stations()
 timetable_handler = TimeTableHandler()
@@ -14,11 +12,11 @@ timetable_handler = TimeTableHandler()
 
 
 # TODO: tmp
-sample = 100
+sample = 1
 
 def start_full_pipeline():
     for station in station_helper.stations_list:
-        station.insert_to_db(SqliteClient.db_engine, "stations")
+        station.insert_to_db(SqliteClient.db_engine)
     start_api_pipeline()
 
 def start_api_pipeline():
@@ -31,7 +29,7 @@ def start_api_pipeline():
             trains_in_this_hour = timetable_handler.get_timetable_data(
                 response)
             for train_plan in trains_in_this_hour:
-                train_plan.insert_into_db(SqliteClient.db_engine, "train_plan")
+                train_plan.insert_into_db(SqliteClient.db_engine)
 
     for station in station_helper.stations_list[:sample]:
         response = api_client.get_all_timetable_changes_from_station(
@@ -40,6 +38,9 @@ def start_api_pipeline():
             continue
         plans_change = timetable_handler.get_timetable_changes_data(response)
         for plan_change in plans_change:
-            plan_change.insert_into_db(SqliteClient.db_engine, "plan_change")
+            plan_change.insert_into_db(SqliteClient.db_engine)
 
     SqliteClient.db_engine.close()
+
+if __name__ == "__main__":
+    start_full_pipeline()
