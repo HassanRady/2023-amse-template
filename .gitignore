@@ -203,6 +203,4 @@ log.txt
 *.sqlite
 data.sqlite-journal
 
-*.ipynb
-
 data/weather_data/data/*
