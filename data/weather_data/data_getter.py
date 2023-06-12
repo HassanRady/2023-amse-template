@@ -63,7 +63,6 @@ def get_raw_data_to_sqlite():
 
         header = [h.decode("utf-8") for h in tmp[0].split()]
         station_description_df = pd.DataFrame(data=rows, columns=header)
-        station_description_df['Stations_id'] = station_description_df['Stations_id'].astype(int)
         station_description_df.to_sql("weather_station_description", SqliteClient.db_engine, index=False)
 
     for zip_link in target_links:
