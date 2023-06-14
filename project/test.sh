@@ -1,2 +1,2 @@
 source .venv/bin/activate
-python -m pytest Data/tests.py
+python -m pytest data/tests.py
