@@ -17,7 +17,7 @@ class Station(NamedTuple):
     def insert_to_db(self, db_engine):
         db_engine.execute(
             f"""
-            INSERT INTO {config.database.STATION_TABLE} VALUES ({self.EVA_NR}, '{self.DS100}', '{self.IFOPT}', '{self.NAME}',
+            INSERT OR REPLACE INTO {config.database.STATION_TABLE} VALUES ({self.EVA_NR}, '{self.DS100}', '{self.IFOPT}', '{self.NAME}',
             '{self.Verkehr}', '{self.Laenge}', '{self.Breite}', '{self.Betreiber_Name}', {self.Betreiber_Nr}, '{self.Status}');
            """
 
