@@ -4,10 +4,7 @@ from pydantic import BaseModel
 from strictyaml import YAML, load
 
 
-
-import data
-
-PACKAGE_ROOT = Path(data.__file__).resolve().parent.parent
+PACKAGE_ROOT = Path(__file__).resolve().parent.parent
 CONFIG_FILE_PATH = PACKAGE_ROOT/ "data" / "config.yml"
 
 
