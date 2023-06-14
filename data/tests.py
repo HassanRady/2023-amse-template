@@ -1,51 +1,101 @@
-import os
 import sys
-sys.path.append(os.path.dirname(os.path.abspath('')))
-from dotenv import load_dotenv
-load_dotenv(".env")
-
+import os
+sys.path.append(os.path.abspath('') + '/data')
+from config import config
+from unittest import TestCase
+from deutsche_bahn_api.timetable_retrieval import TimeTableHandler
+from deutsche_bahn_api.station_loader import StationLoader
+from deutsche_bahn_api.api_caller import ApiClient
+from database_client import SqliteClient
 import pandas as pd
 
-from data.database_client import SqliteClient
-from data.deutsche_bahn_api.api_caller import ApiClient
-from data.deutsche_bahn_api.station_loader import StationLoader
-from data.deutsche_bahn_api.timetable_retrieval import TimeTableHandler
 
-from data.config import config
-
-from unittest import TestCase
-
-api_client = ApiClient(os.environ["DB_CLIENT_ID"], os.environ["DB_API_KEY"])
+api_client = ApiClient()
 station_loader = StationLoader()
 station_loader.load_stations()
 sample_station = station_loader.stations_list[10].EVA_NR
 
 
-
 class TestDataPipeline(TestCase):
 
     def test_pipeline(self):
+
+        SqliteClient.db_engine.execute("""
+            CREATE TABLE IF NOT EXISTS stations (
+    EVA_NR int,
+    DS100 text,
+    IFOPT text,
+    NAME text,
+    Verkehr text,
+    Laenge text,
+    Breite text,
+    Betreiber_Name text,
+    Betreiber_Nr int,
+    Status text,
+    PRIMARY KEY (EVA_NR)
+);
+  """)
+        SqliteClient.db_engine.execute("""
+          
+CREATE TABLE IF NOT EXISTS train_plan (
+    EVA_NR int,
+    stop_id text,
+    trip_type text,
+    train_type text,
+    train_number text,
+    train_line text,
+    platform text,
+    next_stations text,
+    passed_stations text,
+    arrival text,
+    departure text,
+    FOREIGN KEY (EVA_NR) REFERENCES stations(EVA_NR)
+);
+""")
+        SqliteClient.db_engine.execute("""
+   
+CREATE TABLE IF NOT EXISTS plan_change(
+        EVA_NR int,
+        stop_id text,
+        next_stations text,
+        passed_stations text,
+        arrival text,
+        departure text,
+        platform text,
+        FOREIGN KEY (EVA_NR) REFERENCES stations(EVA_NR),
+        FOREIGN KEY (stop_id) REFERENCES train_plan(stop_id),
+        PRIMARY KEY (EVA_NR, stop_id)
+);
+        """)
+
         self.station_loader = StationLoader()
-        self.api_client = ApiClient(os.environ["DB_CLIENT_ID"], os.environ["DB_API_KEY"])
+        self.api_client = ApiClient()
         self.timetable_handler = TimeTableHandler()
         self.sqlite_client = SqliteClient()
         self.station_loader.load_stations()
         self.sample_station = self.station_loader.stations_list[10].EVA_NR
-        response = self.api_client.get_current_hour_station_timetable(sample_station)
+        response = self.api_client.get_current_hour_station_timetable(
+            sample_station)
         trains_this_hour = self.timetable_handler.get_timetable_data(response)
-        response = self.api_client.get_all_timetable_changes_from_station(sample_station)
-        plan_changes = self.timetable_handler.get_timetable_changes_data(response)
-        
+        response = self.api_client.get_all_timetable_changes_from_station(
+            sample_station)
+        plan_changes = self.timetable_handler.get_timetable_changes_data(
+            response)
+
         sample_plan_change = plan_changes[0]
         sample_train = trains_this_hour[0]
-        sample_train.insert_into_db(SqliteClient.db_engine, config.database.TRAIN_TABLE)
-        sample_plan_change.insert_into_db(SqliteClient.db_engine, config.database.PLAN_CHANGE_TABLE)
+        sample_train.insert_into_db(
+            SqliteClient.db_engine,)
+        sample_plan_change.insert_into_db(
+            SqliteClient.db_engine,)
 
-        df = pd.read_sql(f"select * from {config.database.TRAIN_TABLE}", SqliteClient.db_engine)
+        df = pd.read_sql(
+            f"select * from {config.database.TRAIN_TABLE}", SqliteClient.db_engine)
         df = df.query(f"EVA_NR == {sample_train.EVA_NR}")
         self.assertGreater(len(df), 0)
 
-        df = pd.read_sql(f"select * from {config.database.PLAN_CHANGE_TABLE}", SqliteClient.db_engine)
+        df = pd.read_sql(
+            f"select * from {config.database.PLAN_CHANGE_TABLE}", SqliteClient.db_engine)
         df = df.query(f"EVA_NR == {sample_plan_change.EVA_NR}")
         self.assertGreater(len(df), 0)
 
@@ -70,18 +120,20 @@ class StationLoaderTest(TestCase):
 class ApiCallTest(TestCase):
     def __init__(self, methodName: str = "runTest") -> None:
         super().__init__(methodName)
-        self.api_client = ApiClient(os.environ["DB_CLIENT_ID"], os.environ["DB_API_KEY"])
+        self.api_client = ApiClient()
         station_helper = StationLoader()
         station_helper.load_stations()
         self.sample_station = station_helper.stations_list[10].EVA_NR
 
     def test_timetable_station_call_success_status_code(self):
-        response = self.api_client.get_current_hour_station_timetable(self.sample_station)
+        response = self.api_client.get_current_hour_station_timetable(
+            self.sample_station)
         expected = 200
         assert response.status_code == expected
 
     def test_plan_change_station_call_success_status_code(self):
-        response = self.api_client.get_all_timetable_changes_from_station(self.sample_station)
+        response = self.api_client.get_all_timetable_changes_from_station(
+            self.sample_station)
         expected = 200
         assert response.status_code == expected
 
@@ -93,7 +145,8 @@ class TimeTableDataHandlerTest(TestCase):
         self.timetable_handler = TimeTableHandler()
 
     def test_train_plan_data_existence(self):
-        response = api_client.get_current_hour_station_timetable(self.sample_station)
+        response = api_client.get_current_hour_station_timetable(
+            self.sample_station)
         trains_this_hour = self.timetable_handler.get_timetable_data(response)
         sample_train = trains_this_hour[0]
 
@@ -104,8 +157,10 @@ class TimeTableDataHandlerTest(TestCase):
         assert sample_train.next_stations is not None
 
     def test_plan_change_data_existence(self):
-        response = api_client.get_all_timetable_changes_from_station(self.sample_station)
-        plan_changes = self.timetable_handler.get_timetable_changes_data(response)
+        response = api_client.get_all_timetable_changes_from_station(
+            self.sample_station)
+        plan_changes = self.timetable_handler.get_timetable_changes_data(
+            response)
         sample_plan_change = plan_changes[0]
 
         assert sample_plan_change.EVA_NR == self.sample_station
@@ -114,34 +169,39 @@ class TimeTableDataHandlerTest(TestCase):
         assert sample_plan_change.departure is not None
         assert sample_plan_change.next_stations is not None
 
+
 class SqliteInsertionTest(TestCase):
     def __init__(self, methodName: str = "runTest") -> None:
         super().__init__(methodName)
         self.timetable_handler = TimeTableHandler()
 
     def test_train_plan_insertion(self):
-        response = api_client.get_current_hour_station_timetable(sample_station)
+        response = api_client.get_current_hour_station_timetable(
+            sample_station)
         trains_this_hour = self.timetable_handler.get_timetable_data(response)
         sample_train = trains_this_hour[0]
 
-        sample_train.insert_into_db(SqliteClient.db_engine, config.database.TRAIN_TABLE)
+        sample_train.insert_into_db(
+            SqliteClient.db_engine)
 
-        df = pd.read_sql(f"select * from {config.database.TRAIN_TABLE}", SqliteClient.db_engine)
+        df = pd.read_sql(
+            f"select * from {config.database.TRAIN_TABLE}", SqliteClient.db_engine)
         df = df.query(f"EVA_NR == {sample_train.EVA_NR}")
 
         assert len(df) > 0
 
     def test_plan_change_insertion(self):
-        response = api_client.get_all_timetable_changes_from_station(sample_station)
-        plan_changes = self.timetable_handler.get_timetable_changes_data(response)
+        response = api_client.get_all_timetable_changes_from_station(
+            sample_station)
+        plan_changes = self.timetable_handler.get_timetable_changes_data(
+            response)
         sample_plan_change = plan_changes[0]
 
-        sample_plan_change.insert_into_db(SqliteClient.db_engine, config.database.PLAN_CHANGE_TABLE)
-        
-        df = pd.read_sql(f"select * from {config.database.PLAN_CHANGE_TABLE}", SqliteClient.db_engine)
+        sample_plan_change.insert_into_db(
+            SqliteClient.db_engine)
+
+        df = pd.read_sql(
+            f"select * from {config.database.PLAN_CHANGE_TABLE}", SqliteClient.db_engine)
         df = df.query(f"EVA_NR == {sample_plan_change.EVA_NR}")
 
         assert len(df) > 0
-
-
-
