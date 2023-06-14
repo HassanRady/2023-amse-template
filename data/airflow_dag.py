@@ -7,7 +7,7 @@ from airflow.operators.python import PythonOperator
 from airflow.operators.empty import EmptyOperator
 from pathlib import Path
 
-from api_data_getter import get_data
+from data.db_api_data_pipeline import start_api_pipeline
 
 
 with DAG(dag_id="SAKI",
@@ -16,6 +16,6 @@ with DAG(dag_id="SAKI",
          catchup=False) as dag:
     task1 = PythonOperator(
         task_id="fetcher_inserter",
-        python_callable=get_data)
+        python_callable=start_api_pipeline)
 
 task1

@@ -1,31 +1,33 @@
 from pathlib import Path
-from typing import Dict, List, Sequence
 
 from pydantic import BaseModel
 from strictyaml import YAML, load
 
-import project
-
-# Project Directories
-PACKAGE_ROOT = Path(project.__file__).resolve().parent.parent
-CONFIG_FILE_PATH = PACKAGE_ROOT/ "project" / "config.yml"
 
 
+import data
+
+PACKAGE_ROOT = Path(data.__file__).resolve().parent.parent
+CONFIG_FILE_PATH = PACKAGE_ROOT/ "data" / "config.yml"
 
 
 class DataBaseConfig(BaseModel):
-    """
-    Kafka-level config.
-    """
-
-    DB_PATH: str
+    DATABASE_NAME: str
+    STATION_TABLE: str
     TRAIN_TABLE: str
     PLAN_CHANGE_TABLE: str
+
+
+class WeatherDataConfig(BaseModel):
+    WEATHER_DATA_URL: str
+    WEATHER_DATA_PATH: str
+
 
 class Config(BaseModel):
     """Master config object."""
 
     database: DataBaseConfig
+    weather_data: WeatherDataConfig
 
 
 def find_config_file() -> Path:
@@ -56,6 +58,7 @@ def create_and_validate_config(parsed_config: YAML = None) -> Config:
     # specify the data attribute from the strictyaml YAML type.
     _config = Config(
         database=DataBaseConfig(**parsed_config.data),
+        weather_data=WeatherDataConfig(**parsed_config.data),
     )
 
     return _config

@@ -1,7 +1,7 @@
-import os
 import pandas as pd
 
-from Data.deutsche_bahn_api.data_processor import DataProcessor
+from data.config import config
+from data.deutsche_bahn_api.data_processor import DataProcessor
 
 class TrainPlan:
     """A train plan given a station (train in station)."""
@@ -38,13 +38,13 @@ class TrainPlan:
     def __str__(self) -> str:
         return f"TrainPlan(train_number={self.train_number}, train_type={self.train_type}, )"
     
-    def insert_into_db(self, db_engine, table_name):
+    def insert_into_db(self, db_engine):
         self.arrival = DataProcessor.process_date_format(self.arrival)
         self.departure = DataProcessor.process_date_format(self.departure)
 
         db_engine.execute(
             f"""
-            INSERT OR REPLACE INTO {table_name} VALUES (
+            INSERT OR REPLACE INTO {config.database.TRAIN_TABLE} VALUES (
                 {self.EVA_NR}, '{self.stop_id}', '{self.trip_type}', '{self.train_type}', '{self.train_number}',
               '{self.train_line}', '{self.platform}', '{self.next_stations}', '{self.passed_stations}', '{self.arrival}', 
               '{self.departure}'

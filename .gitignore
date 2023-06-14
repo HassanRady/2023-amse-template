@@ -200,9 +200,7 @@ debug.log
 tmp.py
 tmp*
 log.txt
-# *.sqlite
+*.sqlite
 data.sqlite-journal
-
-*.ipynb
 
 data/weather_data/data/*

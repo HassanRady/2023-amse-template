@@ -1,0 +1,3 @@
+from weather_data.data_getter import get_raw_data_to_sqlite
+
+get_raw_data_to_sqlite()

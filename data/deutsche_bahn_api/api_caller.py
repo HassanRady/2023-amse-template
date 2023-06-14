@@ -1,12 +1,8 @@
-import os
-import sys
-import inspect
+if __name__ == "__main__":
+    import sys
+    sys.stderr.write('\x1b[0;30;41m' + 'CAN NOT BE RUN DIRECTLY, MUST RUN FROM (data) DIRECTORY' + '\x1b[0m' +"\n")
 
-currentdir = os.path.dirname(os.path.abspath(
-    inspect.getfile(inspect.currentframe())))
-parentdir = os.path.dirname(currentdir)
-grand_parentdir = os.path.dirname(parentdir)
-sys.path.insert(0, grand_parentdir)
+import os
 
 from logger import get_file_logger
 _logger = get_file_logger(__name__, 'debug')
@@ -15,9 +11,9 @@ import requests
 from datetime import datetime
 
 class ApiClient:
-    def __init__(self, client_id, client_secret) -> None:
-        self.client_id = client_id
-        self.client_secret = client_secret
+    def __init__(self,) -> None:
+        self.client_id = os.environ["DB_CLIENT_ID"]
+        self.client_secret = os.environ["DB_API_KEY"]
 
         self.headers = {
                 "DB-Api-Key": self.client_secret,
@@ -59,11 +55,4 @@ class ApiClient:
         return "ApiClient(DB_CLIENT_ID=***, DB_API_KEY=***)"
     
 
-
-if __name__ == "__main__":
-    from dotenv import load_dotenv
-    load_dotenv(".env")
-
-    api = ApiClient(os.environ["DB_CLIENT_ID"], os.environ["DB_API_KEY"])
-    response = api.get_current_hour_station_timetable(8000107)
 

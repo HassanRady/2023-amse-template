@@ -1,4 +1,0 @@
-# DataBase configs
-DB_PATH: data.sqlite
-TRAIN_TABLE: train_plan
-PLAN_CHANGE_TABLE: plan_change

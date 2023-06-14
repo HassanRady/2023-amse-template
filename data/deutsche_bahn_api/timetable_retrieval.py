@@ -1,12 +1,16 @@
 from __future__ import annotations
 
+import os
+import sys
+sys.path.append(os.path.abspath(__file__))
+
 from logger import get_file_logger
 _logger = get_file_logger(__name__, 'debug')
 
 import xml.etree.ElementTree as elementTree
 
-from Data.deutsche_bahn_api.train_plan import TrainPlan
-from Data.deutsche_bahn_api.plan_change import PlanChange
+from data.deutsche_bahn_api.train_plan import TrainPlan
+from data.deutsche_bahn_api.plan_change import PlanChange
 
 class TimeTableHandler:
     def __init__(self) -> None:
