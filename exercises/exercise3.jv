@@ -1,0 +1,76 @@
+pipeline CarData {
+    block DataExtractor oftype HttpExtractor {
+        url: "https://www-genesis.destatis.de/genesis/downloads/00/tables/46251-0021_00.csv";
+    }
+
+	block DataFileInterpreter oftype TextFileInterpreter {}	
+
+	block DataCSVInterpreter oftype CSVInterpreter {
+		delimiter: ';';
+	}
+
+    block TopRowDeleter oftype RowDeleter {
+        delete: [row 1, row 2, row 3, row 4, row 5, row 6, row 7];
+    }
+
+    block TableColumnDeleter oftype ColumnDeleter {
+        delete: [column D, column E, column F, column G, column H, column I, column J, column K, column L, column N, column O, column P, column Q, column R, column S, column T, column U, column V, column X, column Y, column Z];
+    }
+
+    block NameHeaderWriter oftype CellWriter {
+		at: range A1:A10;
+		write: ["date", "CIN", "name", "petrol", "diesel", "gas", "electro", "hybird", "plugInHybird", "others"];
+	}
+
+	block DataTableInterpreter oftype TableInterpreter {
+		header: true;
+        columns: [
+            "date" oftype text,
+            "CIN" oftype CINtype,
+            "name" oftype text,
+            "petrol" oftype PositiveInteger,
+            "diesel" oftype PositiveInteger,
+            "gas" oftype PositiveInteger,
+            "electro" oftype PositiveInteger,
+            "hybird" oftype PositiveInteger,
+            "plugInHybird" oftype PositiveInteger,
+            "others" oftype PositiveInteger,
+        ];
+    }
+
+    valuetype CINtype oftype text {
+        constraints: [
+            CINconstraint
+        ];
+    }
+
+    constraint CINconstraint oftype LengthConstraint{
+        minLength: 5;
+        maxLength: 5;
+    }
+
+    valuetype PositiveInteger oftype integer {
+        constraints: [
+            PositiveConstraint
+        ];
+    }
+
+    constraint PositiveConstraint oftype RangeConstraint {
+        lowerBound: 0;
+    }
+
+	block DataLoader oftype SQLiteLoader {
+		file: "./cars.sqlite";
+		table: "cars";
+	}
+
+    DataExtractor
+    -> DataFileInterpreter
+    -> DataCSVInterpreter
+    ->TopRowDeleter
+    ->TableColumnDeleter
+    ->NameHeaderWriter
+    ->DataTableInterpreter
+    ->DataLoader;
+
+}
