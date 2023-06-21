@@ -24,7 +24,7 @@ pipeline CarData {
 	// }
 
 	block DataTableInterpreter oftype TableInterpreter {
-		header: true;
+		header: false;
         columns: [
             "date" oftype text,
             "CIN" oftype CINtype,
