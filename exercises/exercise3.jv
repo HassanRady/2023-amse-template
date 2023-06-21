@@ -62,15 +62,15 @@ pipeline CarData {
     }
 
 	block DataLoader oftype SQLiteLoader {
-		file: "./cars.sqlite";
 		table: "cars";
+		file: "./cars.sqlite";
 	}
 
     DataExtractor
     -> DataFileInterpreter
-    ->DataLineSelector
+        ->DataLineSelector
     -> DataCSVInterpreter
-    ->TableColumnDeleter
+        ->TableColumnDeleter
     ->DataTableInterpreter
     ->DataLoader;
 
