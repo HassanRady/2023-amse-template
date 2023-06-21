@@ -4,23 +4,24 @@ pipeline CarData {
     }
 
 	block DataFileInterpreter oftype TextFileInterpreter {}	
+    
+    block DataLineSelector oftype TextRangeSelector {
+        lineFrom: 7;
+        lineTo: 483; 
+    }
 
 	block DataCSVInterpreter oftype CSVInterpreter {
 		delimiter: ';';
 	}
 
-    block TopRowDeleter oftype RowDeleter {
-        delete: [row 1, row 2, row 3, row 4, row 5, row 6, row 7];
-    }
-
     block TableColumnDeleter oftype ColumnDeleter {
-        delete: [column D, column E, column F, column G, column H, column I, column J, column K, column L, column N, column O, column P, column Q, column R, column S, column T, column U, column V, column X, column Y, column Z];
+        delete: [column D, column E, column F, column Q, column H, column I, column J, column K, column L, column N, column O, column P, column Q, column R, column S, column T, column U, column V, column X, column Y, column Z, column AA, column AB, column AC, column AD, column AE, column AF, column AH, column AI, column AJ, column AK, column AL, column AM, column AN, column AO, column AP, column AR, column AS, column AT, column AU, column AV, column AW, column AX, column AY, column AZ, column BB, column BC, column BD, column BE, column BF, column BQ, column BH, column BI, column BJ, column BL, column BM, column BM, column BQ, column BR, column BS, column BT, column BV, column BW, column BX, column BY, column BZ, column CA, column CB, column CC, column CD, column CE];    
     }
 
-    block NameHeaderWriter oftype CellWriter {
-		at: range A1:A10;
-		write: ["date", "CIN", "name", "petrol", "diesel", "gas", "electro", "hybird", "plugInHybird", "others"];
-	}
+    // block NameHeaderWriter oftype CellWriter {
+	// 	at: range A1:A10;
+	// 	write: ["date", "CIN", "name", "petrol", "diesel", "gas", "electro", "hybird", "plugInHybird", "others"];
+	// }
 
 	block DataTableInterpreter oftype TableInterpreter {
 		header: true;
@@ -45,7 +46,7 @@ pipeline CarData {
     }
 
     constraint CINconstraint oftype LengthConstraint{
-        minLength: 5;
+        minLength: 0;
         maxLength: 5;
     }
 
@@ -57,6 +58,7 @@ pipeline CarData {
 
     constraint PositiveConstraint oftype RangeConstraint {
         lowerBound: 0;
+        lowerBoundInclusive: false;
     }
 
 	block DataLoader oftype SQLiteLoader {
@@ -66,10 +68,9 @@ pipeline CarData {
 
     DataExtractor
     -> DataFileInterpreter
+    ->DataLineSelector
     -> DataCSVInterpreter
-    ->TopRowDeleter
     ->TableColumnDeleter
-    ->NameHeaderWriter
     ->DataTableInterpreter
     ->DataLoader;
 
