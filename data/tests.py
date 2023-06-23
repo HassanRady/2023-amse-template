@@ -1,15 +1,14 @@
+import pandas as pd
+from weather_data.data_getter import get_station_description, read_weather_files, extract_zip_file, get_links_from_page, get_link_content
+from database_client import SqliteClient
+from deutsche_bahn_api.api_caller import ApiClient
+from deutsche_bahn_api.station_loader import StationLoader
+from deutsche_bahn_api.timetable_retrieval import TimeTableHandler
+from unittest import TestCase
+from config import config
 import sys
 import os
 sys.path.append(os.path.abspath('') + '/data')
-from config import config
-from unittest import TestCase
-from deutsche_bahn_api.timetable_retrieval import TimeTableHandler
-from deutsche_bahn_api.station_loader import StationLoader
-from deutsche_bahn_api.api_caller import ApiClient
-from database_client import SqliteClient
-from weather_data.data_getter import get_station_description, read_weather_files, extract_zip_file, get_links_from_page, get_link_content
-
-import pandas as pd
 
 
 api_client = ApiClient()
@@ -66,10 +65,10 @@ PRIMARY KEY (EVA_NR, stop_id)
 );
 """)
 
+
 class TestDataPipeline(TestCase):
 
     def test_pipeline(self):
-
 
         self.station_loader = StationLoader()
         self.api_client = ApiClient()
@@ -106,19 +105,20 @@ class TestDataPipeline(TestCase):
 class WeatherDataTest(TestCase):
     def __init__(self, methodName: str = "runTest") -> None:
         super().__init__(methodName)
-    
+
     def test_station_loader(self):
         name = "KL_Tageswerte_Beschreibung_Stationen.txt"
         get_station_description(name)
-        df = pd.read_sql("select * from weather_station_description", SqliteClient.db_engine)
+        df = pd.read_sql(
+            "select * from weather_station_description", SqliteClient.db_engine)
         expected = ['Stations_id', 'von_datum', 'bis_datum', 'Stationshoehe', 'geoBreite',
-       'geoLaenge', 'Stationsname', 'Bundesland']
+                    'geoLaenge', 'Stationsname', 'Bundesland']
         actual = df.columns
         assert (actual == expected).all()
 
     def test_data_to_database(self):
         links = get_links_from_page(config.weather_data.WEATHER_DATA_URL)
-        
+
         target_links = []
         sample = 1
         for link_name in links[:sample]:
@@ -130,15 +130,16 @@ class WeatherDataTest(TestCase):
 
         df = read_weather_files(config.weather_data.WEATHER_DATA_PATH)
 
-        df.to_sql("raw_weather_data", SqliteClient.db_engine, index=False, if_exists='replace')
+        df.to_sql("raw_weather_data", SqliteClient.db_engine,
+                  index=False, if_exists='replace')
 
-        test_df = pd.read_sql("select * from raw_weather_data", SqliteClient.db_engine)
+        test_df = pd.read_sql(
+            "select * from raw_weather_data", SqliteClient.db_engine)
         expected = ['STATIONS_ID', 'MESS_DATUM', 'QN_3', '  FX', '  FM', 'QN_4', ' RSK',
-       'RSKF', ' SDK', 'SHK_TAG', '  NM', ' VPM', '  PM', ' TMK', ' UPM',
-       ' TXK', ' TNK', ' TGK', 'eor']
+                    'RSKF', ' SDK', 'SHK_TAG', '  NM', ' VPM', '  PM', ' TMK', ' UPM',
+                    ' TXK', ' TNK', ' TGK', 'eor']
 
         assert (test_df.columns == expected).all()
-
 
 
 class TrainStationLoaderTest(TestCase):
