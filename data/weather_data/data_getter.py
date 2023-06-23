@@ -63,7 +63,7 @@ def get_raw_data_to_sqlite():
 
         header = [h.decode("utf-8") for h in tmp[0].split()]
         station_description_df = pd.DataFrame(data=rows, columns=header)
-        station_description_df.to_sql("weather_station_description", SqliteClient.db_engine, index=False)
+        station_description_df.to_sql("weather_station_description", SqliteClient.db_engine, index=False, if_exists='replace')
 
     for zip_link in target_links:
         r = requests.get(config.weather_data.WEATHER_DATA_URL+zip_link)
@@ -81,4 +81,4 @@ def get_raw_data_to_sqlite():
     for name in target_names:
         df = pd.concat([df, pd.read_csv(config.weather_data.WEATHER_DATA_PATH + name, sep=";")], axis=0)
 
-    df.to_sql("raw_weather_data", SqliteClient.db_engine, index=False)
+    df.to_sql("raw_weather_data", SqliteClient.db_engine, index=False, if_exists='replace')
