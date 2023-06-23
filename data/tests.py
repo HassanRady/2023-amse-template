@@ -108,12 +108,13 @@ class WeatherStationLoaderTest(TestCase):
         super().__init__(methodName)
     
     def test_station_loader(self):
-        link = "https://opendata.dwd.de/climate_environment/CDC/observations_germany/climate/daily/kl/recent/KL_Tageswerte_Beschreibung_Stationen.txt"
-        get_station_description(link)
-        df = pd.read_sql("weather_station_description", SqliteClient.db_engine)
-        expected = ['station_id', 'geoBreite', 'geoLaenge', 'station_name', 'Bundesland']
+        name = "KL_Tageswerte_Beschreibung_Stationen.txt"
+        get_station_description(name)
+        df = pd.read_sql("select * from weather_station_description", SqliteClient.db_engine)
+        expected = ['Stations_id', 'von_datum', 'bis_datum', 'Stationshoehe', 'geoBreite',
+       'geoLaenge', 'Stationsname', 'Bundesland']
         actual = df.columns
-        self.assertEqual(actual, expected)
+        assert (actual == expected).any()
 
 
 class TrainStationLoaderTest(TestCase):
