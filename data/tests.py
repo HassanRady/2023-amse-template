@@ -44,7 +44,8 @@ next_stations text,
 passed_stations text,
 arrival text,
 departure text,
-FOREIGN KEY (EVA_NR) REFERENCES stations(EVA_NR)
+FOREIGN KEY (EVA_NR) REFERENCES stations(EVA_NR),
+    PRIMARY KEY (stop_id)
 );
 """)
 SqliteClient.db_engine.execute("""
