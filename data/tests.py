@@ -7,6 +7,8 @@ from deutsche_bahn_api.timetable_retrieval import TimeTableHandler
 from deutsche_bahn_api.station_loader import StationLoader
 from deutsche_bahn_api.api_caller import ApiClient
 from database_client import SqliteClient
+from weather_data.data_getter import get_station_description
+
 import pandas as pd
 
 
@@ -101,7 +103,20 @@ class TestDataPipeline(TestCase):
         self.assertGreater(len(df), 0)
 
 
-class StationLoaderTest(TestCase):
+class WeatherStationLoaderTest(TestCase):
+    def __init__(self, methodName: str = "runTest") -> None:
+        super().__init__(methodName)
+    
+    def test_station_loader(self):
+        link = "https://opendata.dwd.de/climate_environment/CDC/observations_germany/climate/daily/kl/recent/KL_Tageswerte_Beschreibung_Stationen.txt"
+        get_station_description(link)
+        df = pd.read_sql("weather_station_description", SqliteClient.db_engine)
+        expected = ['station_id', 'geoBreite', 'geoLaenge', 'station_name', 'Bundesland']
+        actual = df.columns
+        self.assertEqual(actual, expected)
+
+
+class TrainStationLoaderTest(TestCase):
     def __init__(self, methodName: str = "runTest") -> None:
         super().__init__(methodName)
         self.station_loader = StationLoader()
