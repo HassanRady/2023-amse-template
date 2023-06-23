@@ -7,7 +7,7 @@ from deutsche_bahn_api.timetable_retrieval import TimeTableHandler
 from deutsche_bahn_api.station_loader import StationLoader
 from deutsche_bahn_api.api_caller import ApiClient
 from database_client import SqliteClient
-from weather_data.data_getter import get_station_description
+from weather_data.data_getter import get_station_description, read_weather_files, extract_zip_file, get_links_from_page, get_link_content
 
 import pandas as pd
 
@@ -103,7 +103,7 @@ class TestDataPipeline(TestCase):
         self.assertGreater(len(df), 0)
 
 
-class WeatherStationLoaderTest(TestCase):
+class WeatherDataTest(TestCase):
     def __init__(self, methodName: str = "runTest") -> None:
         super().__init__(methodName)
     
@@ -114,7 +114,31 @@ class WeatherStationLoaderTest(TestCase):
         expected = ['Stations_id', 'von_datum', 'bis_datum', 'Stationshoehe', 'geoBreite',
        'geoLaenge', 'Stationsname', 'Bundesland']
         actual = df.columns
-        assert (actual == expected).any()
+        assert (actual == expected).all()
+
+    def test_data_to_database(self):
+        links = get_links_from_page(config.weather_data.WEATHER_DATA_URL)
+        
+        target_links = []
+        sample = 1
+        for link_name in links[:sample]:
+            if ".zip" in link_name:
+                target_links.append(link_name)
+        for zip_link in target_links:
+            content = get_link_content(zip_link)
+            extract_zip_file(content)
+
+        df = read_weather_files(config.weather_data.WEATHER_DATA_PATH)
+
+        df.to_sql("raw_weather_data", SqliteClient.db_engine, index=False, if_exists='replace')
+
+        test_df = pd.read_sql("select * from raw_weather_data", SqliteClient.db_engine)
+        expected = ['STATIONS_ID', 'MESS_DATUM', 'QN_3', '  FX', '  FM', 'QN_4', ' RSK',
+       'RSKF', ' SDK', 'SHK_TAG', '  NM', ' VPM', '  PM', ' TMK', ' UPM',
+       ' TXK', ' TNK', ' TGK', 'eor']
+
+        assert (test_df.columns == expected).all()
+
 
 
 class TrainStationLoaderTest(TestCase):
