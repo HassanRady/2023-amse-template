@@ -19,11 +19,11 @@ def get_links_from_page(url):
         links.append(link.get('href'))
     return links
 
-def get_station_description(link):
-    if link is None:
+def get_station_description(name):
+    if name is None:
         return
     tmp = []
-    data = urlopen(config.weather_data.WEATHER_DATA_URL+link)
+    data = urlopen(config.weather_data.WEATHER_DATA_URL+name)
     for n, line in enumerate(data): 
         if n == 0 or n == 1:
             tmp.append(line)
