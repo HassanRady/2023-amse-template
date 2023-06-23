@@ -7,3 +7,4 @@ SQLAlchemy==1.4.46
 plotly==5.14.1
 pydantic==1.10.7
 strictyaml==1.7.3
+bs4==0.0.1
