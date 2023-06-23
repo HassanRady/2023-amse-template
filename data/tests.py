@@ -1,3 +1,7 @@
+import sys
+import os
+sys.path.append(os.path.abspath('') + '/data')
+
 import pandas as pd
 from weather_data.data_getter import get_station_description, read_weather_files, extract_zip_file, get_links_from_page, get_link_content
 from database_client import SqliteClient
@@ -6,9 +10,6 @@ from deutsche_bahn_api.station_loader import StationLoader
 from deutsche_bahn_api.timetable_retrieval import TimeTableHandler
 from unittest import TestCase
 from config import config
-import sys
-import os
-sys.path.append(os.path.abspath('') + '/data')
 
 
 api_client = ApiClient()
