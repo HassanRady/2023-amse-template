@@ -29,6 +29,8 @@ def start_api_pipeline():
             trains_in_this_hour = timetable_handler.get_timetable_data(
                 response)
             for train_plan in trains_in_this_hour:
+                if train_plan.arrival == "N/A" or train_plan.departure == "N/A":
+                    continue
                 train_plan.insert_into_db(SqliteClient.db_engine)
 
     for station in station_helper.stations_list[:sample]:
@@ -38,6 +40,8 @@ def start_api_pipeline():
             continue
         plans_change = timetable_handler.get_timetable_changes_data(response)
         for plan_change in plans_change:
+            if plan_change.arrival == "N/A" or plan_change.departure == "N/A":
+                continue
             plan_change.insert_into_db(SqliteClient.db_engine)
 
     SqliteClient.db_engine.close()
