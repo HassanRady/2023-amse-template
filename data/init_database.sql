@@ -24,7 +24,8 @@ CREATE TABLE IF NOT EXISTS train_plan (
     passed_stations text,
     arrival text,
     departure text,
-    FOREIGN KEY (EVA_NR) REFERENCES stations(EVA_NR)
+    FOREIGN KEY (EVA_NR) REFERENCES stations(EVA_NR),
+    PRIMARY KEY (stop_id)
 );
    
 CREATE TABLE IF NOT EXISTS plan_change(
