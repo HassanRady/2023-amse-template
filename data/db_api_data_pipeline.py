@@ -11,10 +11,8 @@ timetable_handler = TimeTableHandler()
 
 
 
-# TODO: tmp
-sample = 1
 
-def start_full_pipeline():
+def start_full_pipeline(sample):
     for station in station_helper.stations_list:
         station.insert_to_db(SqliteClient.db_engine)
     start_api_pipeline()
@@ -47,4 +45,4 @@ def start_api_pipeline():
     SqliteClient.db_engine.close()
 
 if __name__ == "__main__":
-    start_full_pipeline()
+    start_full_pipeline(sample=2)
