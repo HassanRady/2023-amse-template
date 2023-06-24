@@ -131,6 +131,8 @@ class WeatherDataTest(TestCase):
 
         df = read_weather_files(config.weather_data.WEATHER_DATA_PATH)
 
+        print(df)
+
         df.to_sql("raw_weather_data", SqliteClient.db_engine, index=False, if_exists='replace')
 
         test_df = pd.read_sql(
