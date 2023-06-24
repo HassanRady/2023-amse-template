@@ -121,7 +121,7 @@ class WeatherDataTest(TestCase):
         links = get_links_from_page(config.weather_data.WEATHER_DATA_URL)
 
         target_links = []
-        sample = 1
+        sample = 3
         for link_name in links[:sample]:
             if ".zip" in link_name:
                 target_links.append(link_name)
@@ -131,8 +131,7 @@ class WeatherDataTest(TestCase):
 
         df = read_weather_files(config.weather_data.WEATHER_DATA_PATH)
 
-        df.to_sql("raw_weather_data", SqliteClient.db_engine,
-                  index=False, if_exists='replace')
+        df.to_sql("raw_weather_data", SqliteClient.db_engine, index=False, if_exists='replace')
 
         test_df = pd.read_sql(
             "select * from raw_weather_data", SqliteClient.db_engine)

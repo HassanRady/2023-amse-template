@@ -77,7 +77,6 @@ def read_weather_files(dir):
     df = pd.DataFrame()
     for name in target_names:
         df = pd.concat([df, pd.read_csv(config.weather_data.WEATHER_DATA_PATH + name, sep=";")], axis=0)
-    
     return df
 
 
@@ -100,5 +99,5 @@ def get_raw_data_to_sqlite():
         extract_zip_file(content)
 
     df = read_weather_files(config.weather_data.WEATHER_DATA_PATH)
-
+    # TODO: make station id and date composite key and handle duplication insertion
     df.to_sql("raw_weather_data", SqliteClient.db_engine, index=False, if_exists='replace')
