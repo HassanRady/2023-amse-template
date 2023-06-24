@@ -12,7 +12,7 @@ def get_links_from_page(url):
     req = Request(url)
     html_page = urlopen(req)
 
-    soup = BeautifulSoup(html_page, "html")
+    soup = BeautifulSoup(markup=html_page, features="lxml")
 
     links = []
     for link in soup.findAll('a'):
@@ -80,7 +80,7 @@ def read_weather_files(dir):
     return df
 
 
-def get_raw_data_to_sqlite():
+def get_raw_data():
 
     links = get_links_from_page(config.weather_data.WEATHER_DATA_URL)
 
@@ -99,5 +99,4 @@ def get_raw_data_to_sqlite():
         extract_zip_file(content)
 
     df = read_weather_files(config.weather_data.WEATHER_DATA_PATH)
-    # TODO: make station id and date composite key and handle duplication insertion
-    df.to_sql("raw_weather_data", SqliteClient.db_engine, index=False, if_exists='replace')
+    return df
