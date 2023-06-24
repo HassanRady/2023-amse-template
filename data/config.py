@@ -18,6 +18,7 @@ class DataBaseConfig(BaseModel):
 class WeatherDataConfig(BaseModel):
     WEATHER_DATA_URL: str
     WEATHER_DATA_PATH: str
+    RAW_WEATHER_DATA_TABLE: str
 
 
 class Config(BaseModel):
