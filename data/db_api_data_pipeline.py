@@ -15,9 +15,9 @@ timetable_handler = TimeTableHandler()
 def start_full_pipeline(sample):
     for station in station_helper.stations_list:
         station.insert_to_db(SqliteClient.db_engine)
-    start_api_pipeline()
+    start_api_pipeline(sample)
 
-def start_api_pipeline():
+def start_api_pipeline(sample):
     for station in station_helper.stations_list[:sample]:
         response = api_client.get_current_hour_station_timetable(
             station.EVA_NR)
