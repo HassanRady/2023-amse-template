@@ -117,7 +117,7 @@ class WeatherDataTest(TestCase):
         actual = df.columns
         assert (actual == expected).all()
 
-    def _test_data_to_database(self):
+    def test_data_to_database(self):
         links = get_links_from_page(config.weather_data.WEATHER_DATA_URL)
 
         target_links = []
@@ -131,7 +131,7 @@ class WeatherDataTest(TestCase):
 
         df = read_weather_files(config.weather_data.WEATHER_DATA_PATH)
 
-        df.to_sql("raw_weather_data", SqliteClient.db_engine, index=False, if_exists='replace')
+        df.to_sql(config.weather_data.RAW_WEATHER_DATA_TABLE, SqliteClient.db_engine, index=False, if_exists='append')
 
         test_df = pd.read_sql(
             "select * from raw_weather_data", SqliteClient.db_engine)
