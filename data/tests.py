@@ -137,7 +137,7 @@ class WeatherDataTest(TestCase):
             "select * from raw_weather_data", SqliteClient.db_engine)
         expected = ['STATIONS_ID', 'MESS_DATUM', 'QN_3', '  FX', '  FM', 'QN_4', ' RSK',
                     'RSKF', ' SDK', 'SHK_TAG', '  NM', ' VPM', '  PM', ' TMK', ' UPM',
-                    ' TXK', ' TNK', ' TGK', 'eor']
+                    ' TXK', ' TNK', ' TGK', 'eor', 'id']
 
         assert (test_df.columns == expected).all()
 
