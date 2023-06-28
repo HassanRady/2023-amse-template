@@ -119,10 +119,9 @@ class WeatherDataTest(TestCase):
 
     def test_data_to_database(self):
         links = get_links_from_page(config.weather_data.WEATHER_DATA_URL)
-        print(links)
 
         target_links = []
-        sample = 3
+        sample = 15
         for link_name in links[:sample]:
             if ".zip" in link_name:
                 target_links.append(link_name)
