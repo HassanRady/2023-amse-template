@@ -4,12 +4,14 @@ sys.path.append(os.path.abspath('') + '/data')
 
 import pandas as pd
 from weather_data.data_getter import get_station_description, read_weather_files, extract_zip_file, get_links_from_page, get_link_content
+from weather_data.data_processor import make_unique
 from database_client import SqliteClient
 from deutsche_bahn_api.api_caller import ApiClient
 from deutsche_bahn_api.station_loader import StationLoader
 from deutsche_bahn_api.timetable_retrieval import TimeTableHandler
 from unittest import TestCase
 from config import config
+
 
 
 api_client = ApiClient()
@@ -131,7 +133,7 @@ class WeatherDataTest(TestCase):
 
         df = read_weather_files(config.weather_data.WEATHER_DATA_PATH)
 
-        print(df)
+        df = make_unique(df)
 
         df.to_sql(config.weather_data.RAW_WEATHER_DATA_TABLE, SqliteClient.db_engine, index=False, if_exists='append')
 
