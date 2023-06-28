@@ -3,12 +3,12 @@
 ## Summary
 
 <!-- Describe your data science project in max. 5 sentences. -->
-This project analyzes or trying to find correlation between public transportation time plan and weather.
+This project analyzes or trying to find correlation between local and regional train plans and how the weather is.
 
 ## Rationale
 
 <!-- Outline the impact of the analysis, e.g. which pains it solves. -->
-The analysis helps to predict future delays and cancellation. To adjust people's time for the modified schedule. 
+The analysis tries to confirm or disconfirm the weather factor in train delays, so to wether consider why is this or to drop this factor from the equation of train delays. By considering all factors, this will help in predicting future delays and cancellation. To adjust people's time for the modified schedule. 
 
 ## Datasources
 ### Datasource1: Mobilithek
