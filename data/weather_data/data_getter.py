@@ -81,6 +81,7 @@ def read_weather_files(dir):
 
 def get_raw_data():
 
+    print("Reading links")
     links = get_links_from_page(config.weather_data.WEATHER_DATA_URL)
 
     target_links = []
@@ -91,14 +92,18 @@ def get_raw_data():
         if "KL_Tageswerte_Beschreibung_Stationen" in link_name:
             station_description_link = link_name
 
+    print("Processing stations description")
     get_station_description(station_description_link)
 
+    print("Extracting files")
     for zip_link in target_links:
         content = get_link_content(zip_link)
         extract_zip_file(content)
 
+    print("Reading data")
     df = read_weather_files(config.weather_data.WEATHER_DATA_PATH)
 
+    print("Deleting files")
     files_to_delete = os.listdir('data/weather_data/data')
     for file in files_to_delete:
         if file == '.gitkeep':

@@ -16,13 +16,14 @@ station_helper = StationLoader()
 station_helper.load_stations()
 timetable_handler = TimeTableHandler()
 
+sample = sample=station_helper.stations_list[100:110]
 
-def start_full_pipeline(sample):
+def start_full_pipeline():
     for station in station_helper.stations_list:
         station.insert_to_db(SqliteClient.db_engine)
-    start_api_pipeline(sample)
+    start_api_pipeline()
 
-def start_api_pipeline(sample):
+def start_api_pipeline():
     for station in sample:
         print(f"Processing: {station.EVA_NR}")
 
@@ -69,4 +70,4 @@ def start_api_pipeline(sample):
     SqliteClient.db_engine.close()
 
 if __name__ == "__main__":
-    start_full_pipeline(sample=station_helper.stations_list[100:110])
+    start_full_pipeline()
