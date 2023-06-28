@@ -32,14 +32,14 @@ class TimeTableHandler:
                     # train_data['arrival'] = train_details.attrib
                     train_data['arrival'] = train_details.attrib
 
-            if not train_data.get('departure'):
+            if train_data.get('departure') is None:
                 """ Arrival without departure """
                 continue
 
             train_object = TrainPlan()
             train_object.EVA_NR = api_response.EVA_NR
             train_object.stop_id = train.attrib["id"]
-            train_object.train_type = train_data['train_label']["c"] if train_data.get('train_label') else "N/A"
+            train_object.train_type = train_data['train_label']["c"] if train_data.get('train_label') is not None else "N/A"
             train_object.train_number = train_data['train_label']["n"]
             train_object.platform = train_data['departure']['pp']
             train_object.next_stations = train_data['departure']['ppth']
@@ -55,7 +55,7 @@ class TimeTableHandler:
             else:
                 train_object.train_line = "N/A"
 
-            if train_data.get('arrival'):
+            if train_data.get('arrival') is not None:
                 train_object.passed_stations = train_data['arrival']['ppth']
                 train_object.arrival = train_data['arrival']['pt']
             else:
@@ -99,11 +99,11 @@ class TimeTableHandler:
                         plan_change.platform = "N/A"
 
                 if changes.tag == "ar":                    
-                    if "ct" in changes.attrib:
+                    if "ct" in changes.attrib and changes.attrib["ct"] is not None:
                         plan_change.arrival = changes.attrib["ct"]
                     else:
                         plan_change.arrival = "N/A"                       
-                    if "cpth" in changes.attrib:
+                    if "cpth" in changes.attrib and changes.attrib['cpth'] is not None:
                         plan_change.passed_stations = changes.attrib["cpth"]
                     else:
                         plan_change.passed_stations = "N/A"

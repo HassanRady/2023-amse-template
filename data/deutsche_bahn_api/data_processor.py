@@ -15,7 +15,7 @@ class DataProcessor:
         Returns:
             str: date in (YYYY-MM-DD-HH-MM) format.
         """
-        if date and not (date == "N/A"):
+        if date is not None and not (date == "N/A"):
             date = datetime.strptime(
                 date, "%y%m%d%H%M").strftime('%Y-%m-%d %H:%M')
         return date
