@@ -205,3 +205,4 @@ data.sqlite-journal
 
 data/weather_data/data/*
 !data/weather_data/data/.gitkeep
+airflowRun.txt
