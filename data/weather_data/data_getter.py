@@ -79,7 +79,6 @@ def read_weather_files(dir):
         df = pd.concat([df, pd.read_csv(config.weather_data.WEATHER_DATA_PATH + name, sep=";")], axis=0)
     return df
 
-
 def get_raw_data():
 
     links = get_links_from_page(config.weather_data.WEATHER_DATA_URL)
@@ -99,4 +98,10 @@ def get_raw_data():
         extract_zip_file(content)
 
     df = read_weather_files(config.weather_data.WEATHER_DATA_PATH)
+
+    files_to_delete = os.listdir('data/weather_data/data')
+    for file in files_to_delete:
+        if file == '.gitkeep':
+            continue
+        os.remove("data/weather_data/data/" + file)
     return df
