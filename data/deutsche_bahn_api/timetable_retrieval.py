@@ -25,8 +25,12 @@ class TimeTableHandler:
                     trip_label_object = train_details.attrib
                 if train_details.tag == "dp":
                     departure_object = train_details.attrib
+                else:
+                    departure_object = None
                 if train_details.tag == "ar":
                     arrival_object = train_details.attrib
+                else:
+                    arrival_object = None
 
             if not departure_object:
                 """ Arrival without departure """
