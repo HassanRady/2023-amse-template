@@ -23,38 +23,41 @@ class TimeTableHandler:
             train_data = {}
             for train_details in train:
                 if train_details.tag == "tl":
-                    trip_label_object = train_details.attrib
+                    # train_data['train_label'] = train_details.attrib
+                    train_data['train_label'] = train_details.attrib
                 if train_details.tag == "dp":
-                    departure_object = train_details.attrib
+                    # train_data['departure'] = train_details.attrib
+                    train_data['departure'] = train_details.attrib
                 if train_details.tag == "ar":
-                    arrival_object = train_details.attrib
+                    # train_data['arrival'] = train_details.attrib
+                    train_data['arrival'] = train_details.attrib
 
-            if not departure_object:
+            if not train_data.get('departure'):
                 """ Arrival without departure """
                 continue
 
             train_object = TrainPlan()
             train_object.EVA_NR = api_response.EVA_NR
             train_object.stop_id = train.attrib["id"]
-            train_object.train_type = trip_label_object["c"]
-            train_object.train_number = trip_label_object["n"]
-            train_object.platform = departure_object['pp']
-            train_object.next_stations = departure_object['ppth']
-            train_object.departure = departure_object['pt']
+            train_object.train_type = train_data['train_label']["c"] if train_data.get('train_label') else "N/A"
+            train_object.train_number = train_data['train_label']["n"]
+            train_object.platform = train_data['departure']['pp']
+            train_object.next_stations = train_data['departure']['ppth']
+            train_object.departure = train_data['departure']['pt']
 
-            if "f" in trip_label_object:
-                train_object.trip_type = trip_label_object["f"]
+            if "f" in train_data['train_label']:
+                train_object.trip_type = train_data['train_label']["f"]
             else:
                 train_object.trip_type = "N/A"
 
-            if "l" in departure_object:
-                train_object.train_line = departure_object['l']
+            if "l" in train_data['departure']:
+                train_object.train_line = train_data['departure']['l']
             else:
                 train_object.train_line = "N/A"
 
-            if arrival_object:
-                train_object.passed_stations = arrival_object['ppth']
-                train_object.arrival = arrival_object['pt']
+            if train_data.get('arrival'):
+                train_object.passed_stations = train_data['arrival']['ppth']
+                train_object.arrival = train_data['arrival']['pt']
             else:
                 train_object.arrival = "N/A"
                 train_object.passed_stations = "N/A"
@@ -80,6 +83,7 @@ class TimeTableHandler:
             plan_change.stop_id = changed_train.attrib["id"]
 
             for changes in changed_train:
+                change_data = {}
                 if changes.tag == "dp":
                     if "ct" in changes.attrib:
                         plan_change.departure = changes.attrib["ct"]

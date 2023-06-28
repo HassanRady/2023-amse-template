@@ -23,8 +23,9 @@ def start_full_pipeline(sample):
     start_api_pipeline(sample)
 
 def start_api_pipeline(sample):
-    for station in station_helper.stations_list[500:501]:
-        print(station.EVA_NR)
+    for station in sample:
+        print(f"Processing: {station.EVA_NR}")
+
         response = api_client.get_current_hour_station_timetable(
             station.EVA_NR)
 
@@ -43,7 +44,11 @@ def start_api_pipeline(sample):
                 continue
             train_plan.insert_into_db(SqliteClient.db_engine)
 
-    for station in station_helper.stations_list[500:501]:
+    print("-"*20)
+
+    for station in sample:
+        print(f"Processing: {station.EVA_NR}")
+
         response = api_client.get_all_timetable_changes_from_station(
             station.EVA_NR)
         
@@ -64,4 +69,4 @@ def start_api_pipeline(sample):
     SqliteClient.db_engine.close()
 
 if __name__ == "__main__":
-    start_full_pipeline(sample=50)
+    start_full_pipeline(sample=station_helper.stations_list[100:110])
