@@ -1,8 +1,6 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 from airflow import DAG
 from airflow.operators.python import PythonOperator
-from airflow.operators.empty import EmptyOperator
-from pathlib import Path
 
 from weather_data_pipeline import start_pipeline
 
