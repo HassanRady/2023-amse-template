@@ -23,28 +23,27 @@ def start_full_pipeline(sample):
     start_api_pipeline(sample)
 
 def start_api_pipeline(sample):
-    for station in station_helper.stations_list[:sample]:
+    for station in station_helper.stations_list[500:501]:
         print(station.EVA_NR)
         response = api_client.get_current_hour_station_timetable(
             station.EVA_NR)
 
-        # _logger.debug(response.text)
         if "Request Rejected" in response.text:
             print(f"Bad station data {station.EVA_NR}")
             continue
             
         if response.status_code != 200:
             continue
-        else:
-            trains_in_this_hour = timetable_handler.get_timetable_data(
-                response)
-            
-            for train_plan in trains_in_this_hour:
-                if train_plan.arrival == "N/A" or train_plan.departure == "N/A":
-                    continue
-                train_plan.insert_into_db(SqliteClient.db_engine)
 
-    for station in station_helper.stations_list[:sample]:
+        trains_in_this_hour = timetable_handler.get_timetable_data(
+            response)
+        
+        for train_plan in trains_in_this_hour:
+            if train_plan.arrival == "N/A" or train_plan.departure == "N/A":
+                continue
+            train_plan.insert_into_db(SqliteClient.db_engine)
+
+    for station in station_helper.stations_list[500:501]:
         response = api_client.get_all_timetable_changes_from_station(
             station.EVA_NR)
         
@@ -52,9 +51,9 @@ def start_api_pipeline(sample):
             print(f"Bad station data {station.EVA_NR}")
             continue
 
-
         if response.status_code != 200:
             continue
+
         plans_change = timetable_handler.get_timetable_changes_data(response)
 
         for plan_change in plans_change:
@@ -65,4 +64,4 @@ def start_api_pipeline(sample):
     SqliteClient.db_engine.close()
 
 if __name__ == "__main__":
-    start_full_pipeline(sample=30)
+    start_full_pipeline(sample=50)
