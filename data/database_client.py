@@ -1,7 +1,6 @@
 import sys
 import os
 sys.path.append(os.path.abspath(''))
-print(os.path.abspath(''))
 
 import sqlite3
 import pandas as pd
