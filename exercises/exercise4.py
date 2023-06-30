@@ -31,4 +31,4 @@ def to_fahrenheit(x):
 df_transformed['Temperatur'] = df_transformed['Temperatur'].apply(to_fahrenheit)
 df_transformed['Batterietemperatur'] = df_transformed['Batterietemperatur'].apply(to_fahrenheit)
 
-df_transformed.to_sql("temperatures", "sqlite:///exercises/temperatures.sqlite")
+df_transformed.to_sql("temperatures", "sqlite:///temperatures.sqlite")
